@@ -6,6 +6,8 @@ import * as T3Areas from './t3areas.js';
 import Stats from '../build/jsm/libs/stats.module.js';
 import { Box3, OrthographicCamera } from '../build/three.module.js';
 import * as T3Assets from './t3assets.js';
+import { Buttons } from "../libs/other/buttons.js";
+var buttons = new Buttons(onButtonDown);
 
 let scene, renderer, camera;
 scene = new THREE.Scene();
@@ -148,19 +150,19 @@ scene.add(sceneDrag);
 
 var tamanho_estimado = 115;
 
-const loadingManager = new THREE.LoadingManager( () => {
-    let loadingScreen = document.getElementById( 'loading-screen' );
+const loadingManager = new THREE.LoadingManager(() => {
+    let loadingScreen = document.getElementById('loading-screen');
     loadingScreen.transition = 0;
 
-    let loading = document.getElementById( 'loader' );
+    let loading = document.getElementById('loader');
     loading.transition = 0;
-    loading.classList.add( 'loader-container-hidden' );
+    loading.classList.add('loader-container-hidden');
   
     let button  = document.getElementById("myBtn")
-    button.classList.add( 'start' );
+    button.classList.add('start');
     button.style.backgroundColor = 'Green';
     button.innerHTML = 'START';
-    button.addEventListener("click", onButtonPressed);
+    button.addEventListener('click', onButtonPressed);
 });
 
 const onMouseSelectCube = (event)=>{
@@ -243,13 +245,37 @@ for(let i = 0; i < lsStairs.length; i++)
 render();
 
 function onButtonPressed(){
-    const loadingScreen = document.getElementById( 'loading-screen' );
+    const loadingScreen = document.getElementById('loading-screen');
     loadingScreen.transition = 0;
-    loadingScreen.classList.add( 'fade-out' );
-    loadingScreen.addEventListener( 'transitionend', (e) => {
+    loadingScreen.classList.add('fade-out');
+    loadingScreen.addEventListener('transitionend', (e) => {
       const element = e.target;
-      element.remove();  
+      element.remove();
+      
     });
+    let div = document.getElementById('inGameButtons');
+
+    let buttonC = document.createElement('button');
+    buttonC.style = 'bottom:10px; right: 170px; width: 150px; line-height: 1.0em;';
+    buttonC.innerHTML = 'CHANGE<br>CAMERA';
+    buttonC.id = 'C';
+    buttonC.className = 'video-game-button';
+    buttonC.onclick = function() {
+        changeCamera();
+        moveCamera();
+    };
+    div.appendChild(buttonC);
+
+    let buttonT = document.createElement('button');
+    buttonT.style = 'bottom:10px; right: 10px; width: 150px; line-height: 1.0em;';
+    buttonT.innerHTML = 'TEST<br>MODE';
+    buttonT.id = 'T';
+    buttonT.className = 'video-game-button';
+    buttonT.onclick = function() {
+        isOpenDoors = true;
+    };
+    div.appendChild(buttonT);
+
     soundMusic.play();
 }
 
@@ -412,6 +438,19 @@ function keyboardUpdate(){
     }
     if(keyboard.down('T'))
         isOpenDoors = true;
+}
+
+function onButtonDown(event){
+    if(event.target.id == 'full')
+        buttons.setFullScreen();
+    /*
+    switch(event.target.id)
+    {
+        case 'full':
+            buttons.setFullScreen();
+            break;    
+    }
+    */
 }
 
 function movePlayer(){
