@@ -526,48 +526,50 @@ function movePlayerJoystick(){
 }
 
 function movePlayer(){
-    if(player.rotation._y != graus[orientation[dx][dz]]){
-        let currentDegreePosition = Math.round((player.rotation._y+Math.PI)/Math.PI*180);
-        let left = 0;
-        let right = 0;
-        if(currentDegreePosition > orientation[dx][dz]){
-            left = currentDegreePosition - orientation[dx][dz];
-            right = 360-currentDegreePosition + orientation[dx][dz];
+    if(!xDirection && !zDirection){
+        if(player.rotation._y != graus[orientation[dx][dz]]){
+            let currentDegreePosition = Math.round((player.rotation._y+Math.PI)/Math.PI*180);
+            let left = 0;
+            let right = 0;
+            if(currentDegreePosition > orientation[dx][dz]){
+                left = currentDegreePosition - orientation[dx][dz];
+                right = 360-currentDegreePosition + orientation[dx][dz];
+            }
+            else{
+                left = 360-orientation[dx][dz] + currentDegreePosition;
+                right = orientation[dx][dz] - currentDegreePosition;
+            }
+            if(left > right)
+                player.rotation.set(0, graus[(currentDegreePosition+9)%360], 0);
+            else{
+                if(currentDegreePosition == 0)
+                    player.rotation.set(0, graus[360], 0);
+                else
+                    player.rotation.set(0, graus[Math.abs(currentDegreePosition-9)%360], 0);
+            }
         }
-        else{
-            left = 360-orientation[dx][dz] + currentDegreePosition;
-            right = orientation[dx][dz] - currentDegreePosition;
+
+        let co = Math.sin(player.rotation._y)*speed;
+        let ca = Math.cos(player.rotation._y)*speed;
+
+        cylinder.translateX(co);
+        updateAsset();
+        if(checkCollisions())
+            cylinder.translateX(-co);
+        cylinder.translateZ(ca);
+        updateAsset();
+        if(checkCollisions())
+            cylinder.translateZ(-ca);
+        if(checkStairsCollisions()){
+            cylinder.translateY(speed);
+            player.position.setY(cylinder.position.y-1);
         }
-        if(left > right)
-            player.rotation.set(0, graus[(currentDegreePosition+9)%360], 0);
-        else{
-            if(currentDegreePosition == 0)
-                player.rotation.set(0, graus[360], 0);
-            else
-                player.rotation.set(0, graus[Math.abs(currentDegreePosition-9)%360], 0);
-        }
+        player.position.setX(cylinder.position.x);
+        player.position.setZ(cylinder.position.z);
+        mixerPlayer.update(clock.getDelta());
+
+        updateInterruptores();
     }
-
-    let co = Math.sin(player.rotation._y)*speed;
-    let ca = Math.cos(player.rotation._y)*speed;
-
-    cylinder.translateX(co);
-    updateAsset();
-    if(checkCollisions())
-        cylinder.translateX(-co);
-    cylinder.translateZ(ca);
-    updateAsset();
-    if(checkCollisions())
-        cylinder.translateZ(-ca);
-    if(checkStairsCollisions()){
-        cylinder.translateY(speed);
-        player.position.setY(cylinder.position.y-1);
-    }
-    player.position.setX(cylinder.position.x);
-    player.position.setZ(cylinder.position.z);
-    mixerPlayer.update(clock.getDelta());
-
-    updateInterruptores();
 }
 
 function updateCubePositioningIndicator(){
