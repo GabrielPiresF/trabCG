@@ -75,7 +75,6 @@ const width = 10;
 const widthIsEven = (1-width%2);
 let isOpenDoors = false;
 
-
 let asset = {
     object: null,
     loaded: false,
@@ -106,6 +105,8 @@ let mixerPlayer = new THREE.AnimationMixer();
 let clock = new THREE.Clock();
 let keyboard = new KeyboardState();
 let dx = 1, dz = 1;
+let xDirection = 0;
+let zDirection = 0;
 const speed = 0.09;
 let orientation = [[90, 135, 180], [45, 0, 225], [360, 315, 270]];
 let graus = new Array(361)
@@ -158,7 +159,7 @@ const loadingManager = new THREE.LoadingManager(() => {
     loading.transition = 0;
     loading.classList.add('loader-container-hidden');
   
-    let button  = document.getElementById("myBtn")
+    let button  = document.getElementById('myBtn');
     button.classList.add('start');
     button.style.backgroundColor = 'Green';
     button.innerHTML = 'START';
@@ -254,7 +255,6 @@ function onButtonPressed(){
       
     });
     let div = document.getElementById('inGameButtons');
-
     let buttonC = document.createElement('button');
     buttonC.style = 'bottom:10px; right: 170px; width: 150px; line-height: 1.0em;';
     buttonC.innerHTML = 'CHANGE<br>CAMERA';
@@ -265,7 +265,6 @@ function onButtonPressed(){
         moveCamera();
     };
     div.appendChild(buttonC);
-
     let buttonT = document.createElement('button');
     buttonT.style = 'bottom:10px; right: 10px; width: 150px; line-height: 1.0em;';
     buttonT.innerHTML = 'TEST<br>MODE';
@@ -275,7 +274,27 @@ function onButtonPressed(){
         isOpenDoors = true;
     };
     div.appendChild(buttonT);
+    let joystickDiv = document.createElement('div');
+    joystickDiv.style = 'pointer-events: auto; position: absolute; bottom: 0; left: 0; display: block; touch-action: manipulation;'
+    joystickDiv.id = 'joystickWrapper'
+    div.appendChild(joystickDiv);
 
+    let joystick = nipplejs.create({
+        zone: document.getElementById('joystickWrapper'),
+        mode: 'static',
+        position: {top: '-180px', left: '80px'}
+    });
+
+    joystick.on('move', function(evt, data){
+        xDirection = data.vector.x;
+        zDirection = data.vector.y;
+    });
+
+    joystick.on('end', function(evt){
+        xDirection = 0;
+        zDirection = 0;
+    });
+    
     soundMusic.play();
 }
 
@@ -453,13 +472,66 @@ function onButtonDown(event){
     */
 }
 
+function movePlayerJoystick(){
+    if(xDirection||zDirection){
+        let orientationJoystick = 0;
+        let currentDegreePosition = Math.round((player.rotation._y+Math.PI)/Math.PI*180);
+        if(xDirection>0)
+            orientationJoystick = Math.round((Math.atan(zDirection/xDirection)+Math.PI-THREE.MathUtils.degToRad(45)+Math.PI)/Math.PI*180);
+        else
+            orientationJoystick = Math.round((Math.atan(zDirection/xDirection)-THREE.MathUtils.degToRad(45)+Math.PI)/Math.PI*180);
+        
+        if(Math.abs(currentDegreePosition - orientationJoystick) >= 3){
+            let left = 0;
+            let right = 0;
+            if(currentDegreePosition > orientationJoystick){
+                left = currentDegreePosition - orientationJoystick;
+                right = 360-currentDegreePosition + orientationJoystick;
+            }
+            else{
+                left = 360-orientationJoystick + currentDegreePosition;
+                right = orientationJoystick - currentDegreePosition;
+            }
+            if(left > right)
+                player.rotation.set(0, graus[(currentDegreePosition+3)%360], 0);
+            else{
+                if(currentDegreePosition == 0)
+                    player.rotation.set(0, graus[360], 0);
+                else
+                    player.rotation.set(0, graus[Math.abs(currentDegreePosition-3)%360], 0);
+            }
+        }
+
+        let co = Math.sin(player.rotation._y)*speed;
+        let ca = Math.cos(player.rotation._y)*speed;
+
+        cylinder.translateX(co);
+        updateAsset();
+        if(checkCollisions())
+            cylinder.translateX(-co);
+        cylinder.translateZ(ca);
+        updateAsset();
+        if(checkCollisions())
+            cylinder.translateZ(-ca);
+        if(checkStairsCollisions()){
+            cylinder.translateY(speed);
+            player.position.setY(cylinder.position.y-1);
+        }
+        player.position.setX(cylinder.position.x);
+        player.position.setZ(cylinder.position.z);
+        mixerPlayer.update(clock.getDelta());
+
+        updateInterruptores();
+    }
+}
+
 function movePlayer(){
     if(player.rotation._y != graus[orientation[dx][dz]]){
         let currentDegreePosition = Math.round((player.rotation._y+Math.PI)/Math.PI*180);
         let left = 0;
         let right = 0;
         if(currentDegreePosition > orientation[dx][dz]){
-            left = currentDegreePosition - orientation[dx][dz]
+            left = currentDegreePosition - orientation[dx][dz];
             right = 360-currentDegreePosition + orientation[dx][dz];
         }
         else{
@@ -833,6 +905,7 @@ function render(){
     updateLightArea3();
     updateKeys();
     keyboardUpdate();
+    movePlayerJoystick();
     alternateRender();
     requestAnimationFrame(render);
     cylinder.translateY(-speed);

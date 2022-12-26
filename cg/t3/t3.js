@@ -73,7 +73,6 @@ const width = 10;
 const widthIsEven = (1-width%2);
 let isOpenDoors = false;
 
-
 let asset = {
     object: null,
     loaded: false,
@@ -148,19 +147,19 @@ scene.add(sceneDrag);
 
 var tamanho_estimado = 115;
 
-const loadingManager = new THREE.LoadingManager( () => {
-    let loadingScreen = document.getElementById( 'loading-screen' );
+const loadingManager = new THREE.LoadingManager(() => {
+    let loadingScreen = document.getElementById('loading-screen');
     loadingScreen.transition = 0;
 
-    let loading = document.getElementById( 'loader' );
+    let loading = document.getElementById('loader');
     loading.transition = 0;
-    loading.classList.add( 'loader-container-hidden' );
+    loading.classList.add('loader-container-hidden');
   
-    let button  = document.getElementById("myBtn")
-    button.classList.add( 'start' );
+    let button  = document.getElementById('myBtn');
+    button.classList.add('start');
     button.style.backgroundColor = 'Green';
     button.innerHTML = 'START';
-    button.addEventListener("click", onButtonPressed);
+    button.addEventListener('click', onButtonPressed);
 });
 
 const onMouseSelectCube = (event)=>{
@@ -243,10 +242,10 @@ for(let i = 0; i < lsStairs.length; i++)
 render();
 
 function onButtonPressed(){
-    const loadingScreen = document.getElementById( 'loading-screen' );
+    const loadingScreen = document.getElementById('loading-screen');
     loadingScreen.transition = 0;
-    loadingScreen.classList.add( 'fade-out' );
-    loadingScreen.addEventListener( 'transitionend', (e) => {
+    loadingScreen.classList.add('fade-out');
+    loadingScreen.addEventListener('transitionend', (e) => {
       const element = e.target;
       element.remove();  
     });
@@ -420,7 +419,7 @@ function movePlayer(){
         let left = 0;
         let right = 0;
         if(currentDegreePosition > orientation[dx][dz]){
-            left = currentDegreePosition - orientation[dx][dz]
+            left = currentDegreePosition - orientation[dx][dz];
             right = 360-currentDegreePosition + orientation[dx][dz];
         }
         else{
