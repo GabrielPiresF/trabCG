@@ -161,7 +161,7 @@ const loadingManager = new THREE.LoadingManager(() => {
   
     let button  = document.getElementById('myBtn');
     button.classList.add('start');
-    button.style.backgroundColor = 'Green';
+    button.style.background = 'none';
     button.innerHTML = 'START';
     button.addEventListener('click', onButtonPressed);
 });
