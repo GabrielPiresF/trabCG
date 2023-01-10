@@ -6,7 +6,7 @@ import * as T3Assets from './t3assets.js';
 let width = 0;
 let widthIsOdd = 0;
 
-let actionableCube = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshLambertMaterial({color: 'rgb(255, 0, 0)'}));
+let actionableCube = new THREE.Mesh(new THREE.BoxGeometry(1, 0.2, 1), new THREE.MeshLambertMaterial({color: 'rgb(255, 0, 0)'}));
 actionableCube.castShadow = true;
 actionableCube.receiveShadow = true;
 
@@ -127,7 +127,7 @@ function auxInsertObjectsArea3(x, y, z, actionableCubes, dragCubes, i, lights, s
             type = Math.round(2*Math.random());
         while((type == 2 && dragCubes.length == 2) || (type == 1 && actionableCubes.length == 2));
     if(type == 1){
-        actionableCube.position.set(x, y+0.95, z);
+        actionableCube.position.set(x, y-0.4, z);
         elevatedCubes.push([actionableCube.clone(), , 3]);
         elevatedCubes[elevatedCubes.length-1][0].material = new THREE.MeshLambertMaterial({color: 'rgb(255, 0, 0)'});
         lsCubes.push(new THREE.Box3().setFromObject(elevatedCubes[elevatedCubes.length-1][0]));
@@ -442,7 +442,7 @@ function createArea2(lsCubes, lsKeys, scene, sceneDrag, cubesPositionLsCubes, ke
     lsCubes.push(new THREE.Box3().setFromObject(doorAndPortal[0]));
     doorsPositionLsCubes.push(lsCubes.length-1);
     
-    actionableCube.position.set(doorAndPortal[0].position.x+6, doorAndPortal[0].position.y+1.45, doorAndPortal[0].position.z+widthIsOdd-2.5);
+    actionableCube.position.set(doorAndPortal[0].position.x+6, doorAndPortal[0].position.y+0.1, doorAndPortal[0].position.z+widthIsOdd-2.5);
 
     for(let i = 0; i < 3; i++){
         elevatedCubes.push([actionableCube.clone(), , 2]);

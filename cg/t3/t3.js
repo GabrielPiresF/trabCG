@@ -281,9 +281,9 @@ function updateLightArea3(){
 function levitateCube(obj, isLevitar){
     if(isLevitar){
         for(let j = 0; j < elevatedCubes.length; j++){
-            if(comparePosition(obj.position, new THREE.Vector3(elevatedCubes[j][0].position.x, elevatedCubes[j][0].position.y+1, elevatedCubes[j][0].position.z),0.1)){
+            if(comparePosition(obj.position, new THREE.Vector3(elevatedCubes[j][0].position.x, elevatedCubes[j][0].position.y+0.6, elevatedCubes[j][0].position.z),0.1)){
                 if(elevatedCubes[j][0].material.color.g){
-                    lerp[j][1] = new THREE.Vector3(lerp[j][1].x, lerp[j][1].y+1, lerp[j][1].z);
+                    lerp[j][1] = new THREE.Vector3(lerp[j][1].x, lerp[j][1].y+0.19, lerp[j][1].z);
                     lerp[j][0].material.color = new THREE.Color(1, 0, 0);
                     if(!soundActionableCube[j].isPlaying)
                         soundActionableCube[j].play();
@@ -479,7 +479,7 @@ function updateCubePositioningIndicator(){
             break;
     if(i!=lsCubes.length){
         do{
-            cubePositioningIndicator.translateY(0.5);
+            cubePositioningIndicator.translateY(0.1);
             cubePositioningIndicatorCollisor = cubePositioningIndicatorCollisor.setFromObject(cubePositioningIndicator);
             i = 0;
             for(; i < lsCubes.length; i++)
@@ -502,7 +502,7 @@ function updateCubePositioningIndicator(){
                 if(cubePositioningIndicatorCollisor.intersectsBox(lsStairs[i]))
                     break;
             if(i!=lsStairs.length){
-                cubePositioningIndicator.translateY(0.5);
+                cubePositioningIndicator.translateY(0.1);
                 cubePositioningIndicatorCollisor = cubePositioningIndicatorCollisor.setFromObject(cubePositioningIndicator);
                 i = 0;
                 for(; i < lsCubes.length; i++)
@@ -646,13 +646,13 @@ function updateTransformations(){
                 if(comparePosition(lerp[i][0].position, lerp[i][1], 0.001)){
                     soundPutObject[sceneDrag.children.findIndex(x=> x === lerp[i][0])].play();
                     for(let j = 0; j < elevatedCubes.length; j++){
-                        if(comparePosition(lerp[i][1], new THREE.Vector3(elevatedCubes[j][0].position.x, elevatedCubes[j][0].position.y+1, elevatedCubes[j][0].position.z),0.1)){
+                        if(comparePosition(lerp[i][1], new THREE.Vector3(elevatedCubes[j][0].position.x, elevatedCubes[j][0].position.y+0.6, elevatedCubes[j][0].position.z),0.1)){
                             if(elevatedCubes[j][0].material.color.r){
-                                lerp[i][0].position.set(0, 1, 0);
+                                lerp[i][0].position.set(0, 0.6, 0);
                                 sceneDrag.remove(lerp[i][0]);
                                 elevatedCubes[j][0].add(lerp[i][0]);
                                 elevatedCubes[j] = [elevatedCubes[j][0], elevatedCubes[j][1], elevatedCubes[j][2], lerp[i][0]]
-                                lerp[j][1] = new THREE.Vector3(lerp[j][1].x, lerp[j][1].y-1, lerp[j][1].z);
+                                lerp[j][1] = new THREE.Vector3(lerp[j][1].x, lerp[j][1].y-0.19, lerp[j][1].z);
                             }
                             break;
                         }
